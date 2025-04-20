@@ -13,37 +13,10 @@
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/ArchiveX.git
+git clone https://github.com/9amx/ArchiveX.git
 cd ArchiveX
 go build -o archivex main.go
 
 ---
 
-### ✅ 5. **Optional: Create a Release**
 
-In GitHub:
-- Go to "Releases" tab
-- Click **Draft a new release**
-- Tag: `v1.0.0`
-- Title: `Initial Release`
-- Add notes about what it does
-- Upload compiled binaries (optional)
-
----
-
-### ✅ 6. **Add a .gitignore (if not added)**
-
-Create `.gitignore` in root:
-
-```bash
-# Go
-bin/
-*.exe
-*.out
-*.log
-*.txt
-*.bak
-
-# OS files
-.DS_Store
-Thumbs.db
