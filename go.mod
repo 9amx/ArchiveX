@@ -1,4 +1,4 @@
-module wayback
+module github.com/9amx/ArchiveX
 
 go 1.23.8
 
