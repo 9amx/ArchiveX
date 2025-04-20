@@ -1,109 +1,80 @@
-# 🗃️ ArchiveX
+<h1 align="center">📦 ArchiveX</h1>
+<p align="center">
+  <strong>The ultimate Wayback Machine scraper tool</strong> built in Go — fast, elegant, and Telegram-integrated.
+</p>
 
-![Go](https://img.shields.io/badge/Made%20with-Go-00ADD8?logo=go&logoColor=white)  
-![Status](https://img.shields.io/badge/status-active-brightgreen)  
-![License](https://img.shields.io/github/license/9amx/ArchiveX)  
-![Telegram](https://img.shields.io/badge/Telegram-Bot-blue?logo=telegram)  
-
-> **ArchiveX** is an advanced Wayback Machine scraping tool written in Go, capable of extracting historical URLs of domains/subdomains with filtering, live progress updates, and **Telegram bot integration**.
+<p align="center">
+  <img src="https://img.shields.io/github/go-mod/go-version/9amx/ArchiveX?style=for-the-badge" />
+  <img src="https://img.shields.io/github/license/9amx/ArchiveX?style=for-the-badge" />
+  <img src="https://img.shields.io/github/stars/9amx/ArchiveX?style=for-the-badge" />
+</p>
 
 ---
 
 ## 🚀 Features
 
-- 🔎 Supports both **single domain** and **bulk domain scanning**
-- 🧠 Smart filtering of sensitive filetypes (`.pdf`, `.sql`, `.json`, `.txt`, and more)
-- 📦 Results organized by domain/subdomain and timestamp
-- 🛡️ Protected by Telegram verification (code required before scan)
-- 📤 Automatically sends results to Telegram bot `[@ehh_wayback_bot](https://t.me/ehh_wayback_bot)`
-- 🧾 Generates detailed summary report per scan
-- ✨ Modern CLI with spinners, progress counter, and clean formatting
+- 🔍 **Scan URLs from the Wayback Machine** for single or multiple domains.
+- 🧠 **Smart file filtering** (`.pdf`, `.sql`, `.json`, etc.)
+- ⚙️ Auto-detects subdomains and saves results into structured folders.
+- 📁 Outputs both **raw and filtered** URLs.
+- 🕐 Shows real-time progress and estimated time remaining.
+- 🤖 **Secure Start:** Requires a one-time access code from Telegram bot before scanning.
+- 📤 Sends results directly to your Telegram via `@ehh_wayback_bot`.
+- ⚡ Written in Go — minimal dependencies, blazing fast!
 
 ---
 
-## 🧑‍💻 Author
+## 📥 Installation
 
-Made with 💀 by [@the9am](https://t.me/the9am)  
-Tool: `ArchiveX`  
-Bot: [@ehh_wayback_bot](https://t.me/ehh_wayback_bot)
-
----
-
-## 📦 Installation
-
-### Clone & Build
+> ✅ Requires Go 1.16+
 
 ```bash
-git clone https://github.com/9amx/ArchiveX.git
-cd ArchiveX
-go build -o wayback
-📲 Telegram Verification
-Before each scan, ArchiveX requests a 6-digit verification code from the Telegram bot.
+go install github.com/9amx/ArchiveX@latest
+This will download and install ArchiveX into your $GOPATH/bin or $HOME/go/bin.
 
-🔐 How it works:
-Start the bot → @ehh_wayback_bot
+💡 Usage
+Start the bot @ehh_wayback_bot on Telegram first, it will send you a 6-digit code.
 
-You will receive a 6-digit access code
+Then run the tool:
 
-Run ArchiveX — it will ask you for this code before scanning starts
-
-⚙️ Usage
-Scan a single domain
 bash
 Copy
 Edit
-./wayback -domain example.com
-Scan multiple domains from file
-bash
-Copy
-Edit
-./wayback -file domains.txt
-Override Telegram Chat ID (optional)
-bash
-Copy
-Edit
-./wayback -domain example.com -id 1234567890
-📁 Output Structure
+# For a single domain
+ArchiveX -domain example.com
+
+# For a list of domains from a file
+ArchiveX -file domains.txt
+
+# Optional: specify Telegram Chat ID manually
+ArchiveX -domain example.com -id 123456789
+
+# Optional: custom output directory
+ArchiveX -domain example.com -output results_folder
+📦 Output Structure
 css
 Copy
 Edit
 wayback_output/
 └── 20250420_123456/
     ├── example_com/
-    │   ├── all.txt           # All captured URLs
-    │   ├── filtered.txt      # Filtered URLs (sensitive extensions)
-    └── summary.txt           # Summary report
-🔧 Flags
+    │   ├── all.txt
+    │   └── filtered.txt
+    └── summary.txt
+📲 Telegram Integration
+✅ You will receive all .txt files (All + Filtered URLs) directly via @ehh_wayback_bot.
 
-Flag	Description
--domain	Scan a single domain
--file	File containing list of domains
--output	Output directory (default: wayback_output)
--ext	Custom file extensions to filter (default used for now)
--id	Override Telegram chat ID manually
-💡 Example domains.txt
-pgsql
-Copy
-Edit
-example.com
-admin.targetsite.org
-shop.company.xyz
-🛠️ To-Do / Roadmap
- Interactive UI / GUI version
+📩 If you wish to use another chat ID, use -id flag.
 
- Export as JSON / CSV
+🔐 Access Control
+To start a scan, the tool will request a one-time 6-digit code from the Telegram bot. This prevents unauthorized usage.
 
- Real-time result streaming to Telegram
+👤 Author
+Made with by @the9am
+GitHub: github.com/9amx
 
- Historical snapshot downloader
-
-📝 License
-This project is open-source and available under the MIT License.
-
-⭐️ Support & Community
-Found it useful?
-Give a ⭐️ on GitHub and share with others.
-Join @the9am for updates or suggestions!
+📄 License
+MIT License
 
 yaml
 Copy
@@ -111,11 +82,10 @@ Edit
 
 ---
 
-### ✅ Want this saved directly as `README.md` in your repo?
+✅ You can copy this directly into `README.md` and commit:
 
-Let me know, and I’ll generate & write it directly for you.
-
-
-
-
-
+```bash
+echo "<paste content here>" > README.md
+git add README.md
+git commit -m "Added modern README with go install instructions"
+git push
