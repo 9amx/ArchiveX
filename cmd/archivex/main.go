@@ -73,77 +73,54 @@ func fetchWithRetry(url string, retries int) (*http.Response, error) {
 	return nil, errors.New("failed after retries")
 }
 
-func fetchAndSave(domain, url, outputFile, label string, counterChan chan int) error {
-	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
-	s.Suffix = " " + label
-	s.Start()
-
-	resp, err := fetchWithRetry(url, 3)
-	if err != nil {
-		s.Stop()
-		return err
-	}
-	defer resp.Body.Close()
-
-	outFile, err := os.Create(outputFile)
-	if err != nil {
-		s.Stop()
-		return err
-	}
-	defer outFile.Close()
-
-	scanner := bufio.NewScanner(resp.Body)
-	count := 0
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line != "" {
-			_, _ = outFile.WriteString(line + "\n")
-			count++
-			if counterChan != nil {
-				counterChan <- 1
-			}
-		}
-	}
-
-	s.Stop()
-	summaryMu.Lock()
-	summary = append(summary, fmt.Sprintf("%s - %s: %d URLs", domain, label, count))
-	summaryMu.Unlock()
-
-	return nil
-}
-
-func sanitizeFileName(domain string) string {
-	reg := regexp.MustCompile(`[^a-zA-Z0-9]+`)
-	return reg.ReplaceAllString(domain, "_")
-}
-
-func processDomain(domain, timestamp, baseOutput, extRegex string, wg *sync.WaitGroup) {
+func processDomain(domain, allPath, filteredPath, extRegex string, wg *sync.WaitGroup, fileMu *sync.Mutex) {
 	defer wg.Done()
-
-	safeDomain := sanitizeFileName(domain)
-	outputDir := filepath.Join(baseOutput, safeDomain)
-	_ = os.MkdirAll(outputDir, os.ModePerm)
-
-	allFile := filepath.Join(outputDir, "all.txt")
-	filteredFile := filepath.Join(outputDir, "filtered.txt")
 
 	allURL := fmt.Sprintf("https://web.archive.org/cdx/search/cdx?url=*.%s/*&collapse=urlkey&output=text&fl=original", domain)
 	filteredURL := fmt.Sprintf("https://web.archive.org/cdx/search/cdx?url=*.%s/*&collapse=urlkey&output=text&fl=original&filter=original:.*\\.(xls|xml|xlsx|json|pdf|sql|doc|docx|pptx|txt|git|zip|tar\\.gz|tgz|bak|7z|rar|log|cache|secret|db|backup|yml|gz|config|csv|yaml|md|md5|exe|dll|bin|ini|bat|sh|tar|deb|rpm|iso|img|env|apk|msi|dmg|tmp|crt|pem|key|pub|asc)$", domain)
 
-	counterChan := make(chan int)
-	go func() {
-		total := 0
-		for c := range counterChan {
-			total += c
-			fmt.Printf("[%s] Processed URLs: %d\r", domain, total)
+	appendResults := func(url, label, filePath string) {
+		s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
+		s.Suffix = " " + label + " (" + domain + ")"
+		s.Start()
+
+		resp, err := fetchWithRetry(url, 3)
+		if err != nil {
+			s.Stop()
+			fmt.Printf("❌ [%s] %s fetch error: %v\n", domain, label, err)
+			return
 		}
-	}()
+		defer resp.Body.Close()
 
-	_ = fetchAndSave(domain, allURL, allFile, "All URLs", counterChan)
-	_ = fetchAndSave(domain, filteredURL, filteredFile, "Filtered URLs", counterChan)
+		scanner := bufio.NewScanner(resp.Body)
+		lines := []string{}
+		count := 0
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if line != "" {
+				lines = append(lines, line)
+				count++
+			}
+		}
 
-	close(counterChan)
+		fileMu.Lock()
+		f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0644)
+		if err == nil {
+			for _, l := range lines {
+				_, _ = f.WriteString(l + "\n")
+			}
+			f.Close()
+		}
+		fileMu.Unlock()
+
+		s.Stop()
+		summaryMu.Lock()
+		summary = append(summary, fmt.Sprintf("%s - %s: %d URLs", domain, label, count))
+		summaryMu.Unlock()
+	}
+
+	appendResults(allURL, "All URLs", allPath)
+	appendResults(filteredURL, "Filtered URLs", filteredPath)
 }
 
 func sendToTelegram(outputDir string) {
@@ -205,10 +182,19 @@ func main() {
 	outputPath := filepath.Join(outputDir, "wayback_results_"+timestamp)
 	_ = os.MkdirAll(outputPath, os.ModePerm)
 
+	allPath := filepath.Join(outputPath, "all.txt")
+	filteredPath := filepath.Join(outputPath, "filtered.txt")
+
+	// Initialize empty files
+	_ = os.WriteFile(allPath, []byte{}, 0644)
+	_ = os.WriteFile(filteredPath, []byte{}, 0644)
+
 	var wg sync.WaitGroup
+	var fileMu sync.Mutex
+
 	if domain != "" {
 		wg.Add(1)
-		go processDomain(domain, timestamp, outputPath, extensionList, &wg)
+		go processDomain(domain, allPath, filteredPath, extensionList, &wg, &fileMu)
 	} else if inputFile != "" {
 		file, err := os.Open(inputFile)
 		if err != nil {
@@ -224,7 +210,7 @@ func main() {
 				continue
 			}
 			wg.Add(1)
-			go processDomain(line, timestamp, outputPath, extensionList, &wg)
+			go processDomain(line, allPath, filteredPath, extensionList, &wg, &fileMu)
 		}
 	} else {
 		fmt.Println("❌ Please provide either -domain or -file")
