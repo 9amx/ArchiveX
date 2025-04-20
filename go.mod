@@ -1,8 +1,10 @@
-module wayback
+module github.com/9amx/ArchiveX
 
 go 1.23.8
 
 require (
+	github.com/briandowns/spinner v1.18.1
+	gopkg.in/telegram-bot-api.v4 v4.6.4
 	github.com/briandowns/spinner v1.23.2 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect
