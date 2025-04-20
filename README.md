@@ -23,18 +23,14 @@
 ```bash
 🛠️ Installation
 1. Build the Tool
-bash
-Copy
-Edit
+
 go build -o archivex ./cmd/archivex
 This will create an executable called archivex in your current directory.
 
 2. Move It to a Directory in Your $PATH
 To run archivex from anywhere:
 
-bash
-Copy
-Edit
+
 sudo mv archivex /usr/local/bin/
 Now you can simply run:
 
@@ -43,26 +39,18 @@ archivex
 
 🧪 Usage
 🔍 Scan a Single Domain
-bash
-Copy
-Edit
+
 archivex -domain example.com
 📄 Scan Multiple Domains
-bash
-Copy
-Edit
+
 archivex -file domains.txt
 🧾 Output Options
-bash
-Copy
-Edit
+
 - output     Output directory (default: "wayback_output")
 - ext        File extensions to filter (currently unused)
 - id         Override Telegram Chat ID
 📦 Example
-bash
-Copy
-Edit
+
 archivex -file targets.txt -output outbox -id 1234567890
 You’ll receive a secure code via Telegram bot @ehh_wayback_bot.
 
@@ -85,8 +73,6 @@ Make sure to start the bot on Telegram before scanning.
 📝 License
 MIT
 
-yaml
-Copy
-Edit
+
 
 
