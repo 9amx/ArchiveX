@@ -22,6 +22,9 @@
 
 ```bash
 🛠️ Installation
+
+git clone https://github.com/9amx/ArchiveX.git
+
 1. Build the Tool
 
 go build -o archivex ./cmd/archivex
