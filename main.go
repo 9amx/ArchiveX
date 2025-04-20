@@ -41,7 +41,7 @@ func askVerificationCode(chatID int64) bool {
 	}
 
 	message := fmt.Sprintf(
-		"🔐 *Verification Code for ArchieveX*\n\nHello! Your secure 6-digit code is: *%s*\n\n👨‍💻 Tool: ArchieveX\n👤 Created by: @the9am\n\nPlease enter this code in your terminal to begin.",
+		"🔐 *Verification Code for ArchiveX*\n\nHello! Your secure 6-digit code is: *%s*\n\n👨‍💻 Tool: ArchiveX\n👤 Created by: @the9am\n\nPlease enter this code in your terminal to begin.",
 		code,
 	)
 
@@ -49,7 +49,7 @@ func askVerificationCode(chatID int64) bool {
 	msg.ParseMode = "Markdown"
 	bot.Send(msg)
 
-	fmt.Println("\n🔐 ArchieveX Security Check")
+	fmt.Println("\n🔐 ArchiveX Security Check")
 	fmt.Println("\n👉 Please start the bot @ehh_wayback_bot on Telegram.")
 	fmt.Println("📩 You’ll receive a 6-digit code there. Enter it below to begin.")
 	fmt.Print("\n🔑 Enter the code: ")
