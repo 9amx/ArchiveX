@@ -21,8 +21,25 @@
 > Requires **Go 1.23+**
 
 ```bash
-go install github.com/9amx/ArchiveX/cmd/archivex@latest
-Make sure your $GOPATH/bin is in your PATH.
+🛠️ Installation
+1. Build the Tool
+bash
+Copy
+Edit
+go build -o archivex ./cmd/archivex
+This will create an executable called archivex in your current directory.
+
+2. Move It to a Directory in Your $PATH
+To run archivex from anywhere:
+
+bash
+Copy
+Edit
+sudo mv archivex /usr/local/bin/
+Now you can simply run:
+
+archivex
+
 
 🧪 Usage
 🔍 Scan a Single Domain
